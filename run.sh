@@ -25,8 +25,8 @@ sudo systemctl restart apache2
 
 # Set up the database for FreePBX
 sudo mysql -u root -p -e "CREATE DATABASE asterisk;"
-sudo mysql -u root -p -e "CREATE USER 'asteriskuser'@'localhost' IDENTIFIED BY 'YOURPASSWORD';"
-sudo mysql -u root -p -e "GRANT ALL PRIVILEGES ON asterisk.* TO 'asteriskuser'@'localhost';"
+sudo mysql -u root -p -e "CREATE USER 'lynx'@'localhost' IDENTIFIED BY 'password';"
+sudo mysql -u root -p -e "GRANT ALL PRIVILEGES ON asterisk.* TO 'lynx'@'localhost';"
 sudo mysql -u root -p -e "FLUSH PRIVILEGES;"
 
 # Download FreePBX
