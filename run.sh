@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script to install FreePBX 17 on Ubuntu
+# Script to install Asterisk and FreePBX 17 on Ubuntu
 
 # Update and Upgrade Ubuntu
 sudo apt-get update && sudo apt-get upgrade -y
@@ -20,13 +20,30 @@ sudo mysql_secure_installation
 # Install PHP and required modules
 sudo apt-get install -y php php-cli php-common php-curl php-mbstring php-mysql php-xml php-json
 
-# Restart Apache to load new config
-sudo systemctl restart apache2
+# Install additional dependencies for Asterisk
+sudo apt-get install -y build-essential wget subversion
+sudo apt-get install -y libncurses5-dev libssl-dev libxml2-dev libsqlite3-dev uuid-dev
+
+# Install Asterisk
+cd /usr/src
+sudo wget http://downloads.asterisk.org/pub/telephony/asterisk/asterisk-16-current.tar.gz
+sudo tar xvf asterisk-16-current.tar.gz
+cd asterisk-16.*/
+sudo contrib/scripts/get_mp3_source.sh
+sudo contrib/scripts/install_prereq install
+sudo ./configure
+sudo make menuselect
+sudo make
+sudo make install
+sudo make samples
+sudo make config
+sudo ldconfig
+sudo systemctl restart asterisk
 
 # Set up the database for FreePBX
 sudo mysql -u root -p -e "CREATE DATABASE asterisk;"
-sudo mysql -u root -p -e "CREATE USER 'lynx'@'localhost' IDENTIFIED BY 'password';"
-sudo mysql -u root -p -e "GRANT ALL PRIVILEGES ON asterisk.* TO 'lynx'@'localhost';"
+sudo mysql -u root -p -e "CREATE USER 'asteriskuser'@'localhost' IDENTIFIED BY 'YOURPASSWORD';"
+sudo mysql -u root -p -e "GRANT ALL PRIVILEGES ON asterisk.* TO 'asteriskuser'@'localhost';"
 sudo mysql -u root -p -e "FLUSH PRIVILEGES;"
 
 # Download FreePBX
@@ -42,4 +59,4 @@ sudo ./install -n
 # Restart Apache to complete installation
 sudo systemctl restart apache2
 
-echo "FreePBX 17 installation complete."
+echo "Asterisk and FreePBX 17 installation complete."
